@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using stock_finance.Data;
+using stock_finance.Mappers;
 
 namespace stock_finance.Controllers
 {
@@ -18,7 +19,8 @@ namespace stock_finance.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var stocks = _context.Stocks.ToList();
+            var stocks = _context.Stocks.ToList()
+                .Select(s => s.ToStockDto());
             return Ok(stocks);
         }
 
@@ -30,7 +32,7 @@ namespace stock_finance.Controllers
             {
                 return NotFound();
             }
-            return Ok(stock);
+            return Ok(stock.ToStockDto());
         }
     }
 }
