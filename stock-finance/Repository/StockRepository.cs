@@ -3,6 +3,7 @@ using stock_finance.Data;
 using stock_finance.Dtos.Stock;
 using stock_finance.Interface;
 using stock_finance.Models;
+using stock_finance.Queries;
 
 namespace stock_finance.Repository
 {
@@ -35,9 +36,19 @@ namespace stock_finance.Repository
             return stockModel;
         }
 
-        public async Task<List<Stock>> GetAllStocksAsync()
+        public async Task<List<Stock>> GetAllStocksAsync(QueryObject query)
         {
-            return await _context.Stocks.Include(c => c.Comments).ToListAsync();
+            var stocks =  _context.Stocks.Include(c => c.Comments).AsQueryable();
+            if(!string.IsNullOrWhiteSpace(query.Symbol))
+            {
+                stocks = stocks.Where(s => s.Symbol.Contains(query.Symbol));
+            }
+            if(!string.IsNullOrWhiteSpace(query.CompanyName))
+            {
+                stocks = stocks.Where(s => s.CompanyName.Contains(query.CompanyName));
+            }
+
+            return await stocks.ToListAsync();
         }
 
         public async Task<Stock?> GetStockByIdAsync(int id)

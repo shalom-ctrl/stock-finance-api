@@ -5,6 +5,7 @@ using stock_finance.Data;
 using stock_finance.Dtos.Stock;
 using stock_finance.Interface;
 using stock_finance.Mappers;
+using stock_finance.Queries;
 
 namespace stock_finance.Controllers
 {
@@ -22,13 +23,13 @@ namespace stock_finance.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery]QueryObject query)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var stocks = await _stockRepo.GetAllStocksAsync();
+            var stocks = await _stockRepo.GetAllStocksAsync(query);
             var stockDtos = stocks.Select(s => s.ToStockDto());
             return Ok(stocks);
         }
